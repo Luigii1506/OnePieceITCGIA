@@ -1,26 +1,29 @@
-from core.game import Game
+from core.card import Card
+from core.leader import Leader
+from core.deck import Deck
 from core.player import Player
-from core.cards import Card
+from core.game import Game
 
-def main():
-    print("Bienvenido al motor de juego de One Piece TCG!")
-    
-    # Crear jugadores
-    player1 = Player("Jugador 1")
-    player2 = Player("Jugador 2")
-    
-    # Crear cartas de ejemplo
-    luffy = Card("Monkey D. Luffy", cost=5, power=6000, card_type="Leader")
-    zoro = Card("Roronoa Zoro", cost=3, power=5000, card_type="Character")
-    nami = Card("Nami", cost=1, power=1000, card_type="Support")
-    
-    # Asignar cartas a jugadores
-    player1.deck = [luffy, zoro, nami]
-    player2.deck = [zoro, nami, luffy]
-    
-    # Iniciar el juego
-    game = Game(player1, player2)
-    #game.start()
+# Crear un líder para cada jugador
+luffy = Leader("Monkey D. Luffy", 5, "Otorga Rush a un aliado una vez por turno")
+zoro = Leader("Roronoa Zoro", 5, "Aumenta el poder de todos los aliados en +1000")
 
-if __name__ == "__main__":
-    main()
+# Crear 50 cartas aleatorias para cada jugador
+cards_p1 = [Card(f"Carta {i+1}", "Character", 5000) for i in range(50)]
+cards_p2 = [Card(f"Carta {i+1}", "Character", 5000) for i in range(50)]
+
+# Crear mazos
+deck_p1 = Deck(luffy, cards_p1)
+deck_p2 = Deck(zoro, cards_p2)
+
+# Barajar mazos
+deck_p1.shuffle()
+deck_p2.shuffle()
+
+# Crear jugadores
+player1 = Player("Jugador 1", deck_p1)
+player2 = Player("Jugador 2", deck_p2)
+
+# Iniciar juego
+game = Game(player1, player2)
+game.start()

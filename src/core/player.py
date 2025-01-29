@@ -1,26 +1,31 @@
+from core.deck import Deck
+
 class Player:
-    def __init__(self, name: str):
-        """
-        Representa un jugador en el juego.
-
-        :param name: Nombre del jugador.
-        """
+    def __init__(self, name: str, deck: Deck):
         self.name = name
-        self.deck = []  # Lista de cartas en el mazo.
-        self.hand = []  # Cartas en la mano.
-        self.life = 5   # Vida inicial estándar.
-        self.dawn = 0   # Recursos disponibles para jugar cartas.
+        self.deck = deck
+        self.hand = []
+        self.life_zone = []
 
-    def draw_card(self):
-        """
-        Roba una carta del mazo y la añade a la mano.
-        """
-        if self.deck:
-            card = self.deck.pop(0)
-            self.hand.append(card)
-            print(f"{self.name} roba una carta: {card.name}")
-        else:
-            print(f"{self.name} no tiene cartas en su mazo.")
+    def mulligan(self):
+        """ Devuelve la mano, baraja y roba de nuevo """
+        print(f"{self.name} decide hacer mulligan.")
+        self.deck.cards.extend(self.hand)  # Devuelve las cartas al mazo
+        self.deck.shuffle()
+        self.hand = self.deck.draw(5)  # Roba una nueva mano
 
-    def __str__(self):
-        return f"{self.name} (Vida: {self.life}, Dawn: {self.dawn}, Mano: {len(self.hand)} cartas)"
+    def start_game(self):
+        """ Fase de inicio: Mulligan y distribución de vidas """
+        self.hand = self.deck.draw(5)
+        print(f"{self.name} ha robado su mano inicial: {self.hand}")
+
+        mulligan_choice = input(f"{self.name}, ¿quieres hacer Mulligan? (s/n): ").strip().lower()
+        if mulligan_choice == 's':
+            self.mulligan()
+
+        # Configurar la vida con cartas del mazo
+        self.life_zone = self.deck.draw(self.deck.leader.life)
+        print(f"{self.name} ha colocado {len(self.life_zone)} cartas en su zona de vida.")
+
+    def __repr__(self):
+        return f"Jugador: {self.name} | Vida: {len(self.life_zone)} | Mano: {len(self.hand)} cartas"
